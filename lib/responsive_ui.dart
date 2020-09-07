@@ -1,3 +1,5 @@
+library responsive_ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:responsive_ui/sizing_information.dart';
@@ -55,7 +57,8 @@ class ResponsiveUI {
 
   double size(double size, {Multiplier multiplier}) {
     if (multiplier != null) _multiplier = multiplier;
-    return size * (_multiplier == Multiplier.blockHeight ? blockHeight : blockWidth);
+    return size *
+        (_multiplier == Multiplier.blockHeight ? blockHeight : blockWidth);
   }
 
   double resize({double phoneSmall, double phone, double tablet}) {
@@ -69,7 +72,6 @@ class ResponsiveUI {
     }
     return size(14);
   }
-
 
   //range 0 - 1 ex 0.5 , 0.9
   screenPercentage({double phoneSmall, double phone, double tablet}) {
