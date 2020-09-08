@@ -51,11 +51,11 @@ class ResponsiveUI {
   }
 
   _scale(double percentage) {
-    blockHeight = (width / 100) * percentage;
-    blockWidth = (height / 100) * percentage;
+    blockWidth = (width / 100) * percentage;
+    blockHeight = (height / 100) * percentage;
   }
 
-  double size(double size, {Multiplier multiplier}) {
+  double size(double size, [Multiplier multiplier]) {
     if (multiplier != null) _multiplier = multiplier;
     return size *
         (_multiplier == Multiplier.blockHeight ? blockHeight : blockWidth);
@@ -75,12 +75,12 @@ class ResponsiveUI {
 
   //range 0 - 1 ex 0.5 , 0.9
   screenPercentage({double phoneSmall, double phone, double tablet}) {
+    assert(phoneSmall <= 1 || phone <= 1 || tablet <= 1);
     _percentagePhoneSmall = phoneSmall;
     _percentagePhone = phone;
     _percentageTablet = tablet;
   }
 }
-
 enum DeviceType { phoneSmall, phone, tablet }
 
 enum Multiplier { blockHeight, blockWidth }
