@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_ui/responsive_ui.dart';
+import 'package:responsive_ui/screen_percentage.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,7 +10,8 @@ class MyApp extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints constraints) =>
             OrientationBuilder(
           builder: (BuildContext context, Orientation orientation) {
-            ResponsiveUI.init(constraints, orientation);
+            ResponsiveUI.init(constraints, orientation)
+                .percentage(ScreenPercentage(phoneSmall: 0.2));
             return MaterialApp(
               title: 'Flutter Demo',
               theme: ThemeData(

@@ -40,6 +40,17 @@ class ResponsiveUI {
     else if (isLandscape && height < 480 || !isLandscape && width < 480)
       device = DeviceType.phoneSmall;
 
+    _rescale(device);
+    _information = SizingInformation(device, orientation);
+    print(_information.toString());
+  }
+
+  _scale(double percentage) {
+    blockWidth = (width / 100) * percentage;
+    blockHeight = (height / 100) * percentage;
+  }
+
+  _rescale(DeviceType device) {
     switch (device) {
       case DeviceType.phoneSmall:
         _scale(_screenPercentage.phoneSmall);
@@ -51,14 +62,6 @@ class ResponsiveUI {
         _scale(_screenPercentage.phone);
         break;
     }
-
-    _information = SizingInformation(device, orientation);
-    print(_information.toString());
-  }
-
-  _scale(double percentage) {
-    blockWidth = (width / 100) * percentage;
-    blockHeight = (height / 100) * percentage;
   }
 
   double size(double size, [Multiplier multiplier]) {
@@ -80,8 +83,10 @@ class ResponsiveUI {
   }
 
   //range 0 - 1 ex 0.5 , 0.9
-  screenPercentage({ScreenPercentage screenPercentage}) =>
-      _screenPercentage = screenPercentage;
+  percentage([ScreenPercentage screenPercentage]) {
+    _screenPercentage = screenPercentage;
+    _rescale(_information.deviceType);
+  }
 }
 
 enum DeviceType { phoneSmall, phone, tablet }
