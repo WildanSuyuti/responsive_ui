@@ -2,6 +2,7 @@ library responsive_ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:responsive_ui/screen_percentage.dart';
 import 'package:responsive_ui/sizing_information.dart';
 
 class ResponsiveUI {
@@ -12,9 +13,7 @@ class ResponsiveUI {
 
   Multiplier _multiplier = Multiplier.blockHeight;
   SizingInformation _information;
-  double _percentagePhoneSmall;
-  double _percentagePhone;
-  double _percentageTablet;
+  ScreenPercentage _screenPercentage;
 
   static final ResponsiveUI _instance = ResponsiveUI._internal();
 
@@ -22,29 +21,36 @@ class ResponsiveUI {
 
   static ResponsiveUI get instance => _instance;
 
-  ResponsiveUI.init(BoxConstraints constraints, Orientation orientation,
+  factory ResponsiveUI.init(BoxConstraints constraints, Orientation orientation,
+          {Multiplier multiplier = Multiplier.blockHeight}) =>
+      _instance.._init(constraints, orientation);
+
+  _init(BoxConstraints constraints, Orientation orientation,
       {Multiplier multiplier = Multiplier.blockHeight}) {
-    DeviceType device = DeviceType.phone;
     _multiplier = multiplier;
+    _screenPercentage = ScreenPercentage();
+    DeviceType device = DeviceType.phone;
+    bool isLandscape = orientation == Orientation.landscape;
 
-    if (orientation == Orientation.landscape) {
-      width = constraints.maxHeight;
-      height = constraints.maxWidth;
-      if (height > 600) device = DeviceType.tablet;
-      if (height < 480) device = DeviceType.phoneSmall;
-    } else {
-      width = constraints.maxWidth;
-      height = constraints.maxHeight;
-      if (width > 600) device = DeviceType.tablet;
-      if (width < 480) device = DeviceType.phoneSmall;
+    width = isLandscape ? constraints.maxHeight : constraints.maxWidth;
+    height = isLandscape ? constraints.maxWidth : constraints.maxHeight;
+
+    if (isLandscape && height > 600 || !isLandscape && width > 600)
+      device = DeviceType.tablet;
+    else if (isLandscape && height < 480 || !isLandscape && width < 480)
+      device = DeviceType.phoneSmall;
+
+    switch (device) {
+      case DeviceType.phoneSmall:
+        _scale(_screenPercentage.phoneSmall);
+        break;
+      case DeviceType.tablet:
+        _scale(_screenPercentage.tablet);
+        break;
+      default:
+        _scale(_screenPercentage.phone);
+        break;
     }
-
-    if (device == DeviceType.tablet) {
-      _scale(_percentageTablet ?? 0.2);
-    } else if (device == DeviceType.phone)
-      _scale(_percentagePhone ?? 0.3);
-    else
-      _scale(_percentagePhoneSmall ?? 0.25);
 
     _information = SizingInformation(device, orientation);
     print(_information.toString());
@@ -74,13 +80,10 @@ class ResponsiveUI {
   }
 
   //range 0 - 1 ex 0.5 , 0.9
-  screenPercentage({double phoneSmall, double phone, double tablet}) {
-    assert(phoneSmall <= 1 || phone <= 1 || tablet <= 1);
-    _percentagePhoneSmall = phoneSmall;
-    _percentagePhone = phone;
-    _percentageTablet = tablet;
-  }
+  screenPercentage({ScreenPercentage screenPercentage}) =>
+      _screenPercentage = screenPercentage;
 }
+
 enum DeviceType { phoneSmall, phone, tablet }
 
 enum Multiplier { blockHeight, blockWidth }
