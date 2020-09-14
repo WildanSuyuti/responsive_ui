@@ -87,6 +87,8 @@ class ResponsiveUI {
     _screenPercentage = screenPercentage;
     _rescale(_information.deviceType);
   }
+
+  SizingInformation get information => _information;
 }
 
 enum DeviceType { phoneSmall, phone, tablet }
