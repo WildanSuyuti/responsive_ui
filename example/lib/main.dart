@@ -1,4 +1,9 @@
+import 'package:example/counter_service.dart';
+import 'package:example/responsive_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_ui/responsive_ui.dart';
 import 'package:responsive_ui/screen_percentage.dart';
 
@@ -17,14 +22,10 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 primarySwatch: Colors.blue,
                 textTheme: TextTheme(
-                  bodyText1:
-                      TextStyle(fontSize: ResponsiveUI.instance.size(16)),
-                  bodyText2:
-                      TextStyle(fontSize: ResponsiveUI.instance.size(14)),
-                  subtitle1:
-                      TextStyle(fontSize: ResponsiveUI.instance.size(16)),
-                  subtitle2:
-                      TextStyle(fontSize: ResponsiveUI.instance.size(14)),
+                  bodyText1: TextStyle(fontSize: responsive.fontSubtitle),
+                  bodyText2: TextStyle(fontSize: responsive.fontNormal),
+                  subtitle1: TextStyle(fontSize: responsive.fontSubtitle),
+                  subtitle2: TextStyle(fontSize: responsive.fontNormal),
                 ),
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
@@ -45,33 +46,49 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() => setState(() => _counter++);
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+  Widget build(BuildContext context) => ChangeNotifierProvider<CounterService>(
+        create: (BuildContext context) => CounterService(),
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(title: Text(widget.title)),
+          body: Center(
+            child: Consumer<CounterService>(
+              builder: (_, value, __) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'You have pushed the button this many times',
+                    style: _style(value.counter),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: responsive.size(8)),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _button(() => value.counter -= 1, text: "-"),
+                          Text('${value.counter.toInt()}', style: _style(18)),
+                          _button(() => value.counter += 1),
+                        ]),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
+      );
+
+  Widget _button(VoidCallback onTap, {String text = "+"}) => FlatButton(
+      onPressed: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(responsive.size(16)),
+        child: Text(
+          text,
+          style: TextStyle(fontSize: responsive.fontTitle),
+        ),
+      ));
+
+  TextStyle _style(double size) => TextStyle(fontSize: responsive.size(size));
 }
